@@ -1,0 +1,64 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function profile() { return get(/databases/$(database)/documents/users/$(request.auth.uid)).data; }
+    function instructor() { return signedIn() && profile().role in ['INSTRUCTOR', 'ADMIN']; }
+    function admin() { return signedIn() && profile().role == 'ADMIN'; }
+
+    match /users/{uid} {
+      allow create: if signedIn() && request.auth.uid == uid && request.resource.data.role == 'TRAINEE';
+      allow read: if signedIn() && (request.auth.uid == uid || instructor());
+      allow update: if signedIn() && ((request.auth.uid == uid && request.resource.data.role == resource.data.role) || admin() || (instructor() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['recommendedDifficulty'])));
+      allow delete: if admin();
+    }
+    match /missions/{missionId} {
+      allow create: if signedIn() && (request.resource.data.userId == request.auth.uid || instructor());
+      allow read: if signedIn() && (resource.data.userId == request.auth.uid || instructor());
+      allow update: if signedIn() && ((resource.data.userId == request.auth.uid && request.resource.data.userId == request.auth.uid) || instructor());
+      allow delete: if admin();
+    }
+    match /missionEvents/{eventId} {
+      allow create: if signedIn() && (request.resource.data.userId == request.auth.uid || instructor());
+      allow read: if signedIn() && (resource.data.userId == request.auth.uid || instructor());
+      allow update: if signedIn() && ((resource.data.userId == request.auth.uid && request.resource.data.userId == resource.data.userId) || instructor());
+      allow delete: if instructor();
+    }
+    match /simulationSessions/{sessionId} {
+      allow read: if signedIn() && (resource.data.userId == request.auth.uid || instructor());
+      allow create: if signedIn() && (request.resource.data.userId == request.auth.uid || instructor());
+      allow update: if signedIn() && ((resource.data.userId == request.auth.uid && request.resource.data.userId == request.auth.uid) || instructor());
+      allow delete: if instructor();
+    }
+    match /performance/{recordId} {
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow read: if signedIn() && (resource.data.userId == request.auth.uid || instructor());
+      allow update: if signedIn() && ((resource.data.userId == request.auth.uid && request.resource.data.userId == resource.data.userId) || instructor());
+      allow delete: if instructor();
+    }
+    match /certifications/{certId} {
+      allow read: if signedIn() && (resource.data.userId == request.auth.uid || instructor());
+      allow create: if signedIn() && (request.resource.data.userId == request.auth.uid || instructor());
+      allow update: if signedIn() && ((resource.data.userId == request.auth.uid && request.resource.data.userId == request.auth.uid) || instructor());
+      allow delete: if instructor();
+    }
+    match /notifications/{notificationId} {
+      allow read: if signedIn() && resource.data.userId == request.auth.uid;
+      allow update: if signedIn() && resource.data.userId == request.auth.uid && request.resource.data.userId == resource.data.userId;
+      allow create: if signedIn() && (request.resource.data.userId == request.auth.uid || instructor());
+      allow delete: if instructor();
+    }
+    match /trainingScenarios/{scenarioId} {
+      allow read: if signedIn();
+      allow write: if admin();
+    }
+    match /systemSettings/{settingId} {
+      allow read, write: if admin();
+    }
+    match /auditLogs/{logId} {
+      allow read: if admin();
+      allow create: if instructor();
+      allow update, delete: if false;
+    }
+  }
+}

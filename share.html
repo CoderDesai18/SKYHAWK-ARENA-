@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#08111c" />
+    <meta name="description" content="SKYHAWK ARENA — offline-ready drone operations training simulation prototype." />
+    <title>SKYHAWK ARENA — Simulation Training Platform</title>
+  </head>
+  <body style="margin:0;background:#080d15;color:#e6eef2;font:14px system-ui,sans-serif">
+    <div id="root">
+      <main id="startup-fallback" style="min-height:100vh;display:grid;place-content:center;text-align:center;padding:24px;gap:14px">
+        <strong style="letter-spacing:.18em;color:#73dce5">SKYHAWK ARENA</strong>
+        <span>Starting the offline training workspace…</span>
+        <small style="color:#91a3ae">The first launch may take a few seconds.</small>
+      </main>
+    </div>
+    <script>
+      window.__SKYHAWK_STANDALONE__ = true;
+      function showStartupIssue(message) {
+        var fallback = document.getElementById('startup-fallback');
+        if (fallback) {
+          fallback.innerHTML = '<strong style="letter-spacing:.18em;color:#73dce5">SKYHAWK ARENA</strong>' +
+            '<span>The app could not start in this preview.</span>' +
+            '<small style="color:#91a3ae">Download this HTML file and open it in a current Chrome, Edge, or Firefox browser. Details: ' +
+            String(message || 'startup timed out').replace(/[&<>"']/g, '') + '</small>';
+        }
+      }
+      window.addEventListener('error', function (event) { showStartupIssue(event.message); });
+      window.addEventListener('unhandledrejection', function (event) { showStartupIssue(event.reason && event.reason.message); });
+      window.setTimeout(function () { showStartupIssue('startup timed out'); }, 12000);
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
