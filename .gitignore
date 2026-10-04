@@ -5,6 +5,7 @@ node_modules/
 dist/
 dist-share/
 dist-single/
+.vercel/
 .vite/
 coverage/
 *.tsbuildinfo
@@ -19,3 +20,4 @@ SKYHAWK_ARENA_GITHUB_UPLOAD.zip
 .DS_Store
 Thumbs.db
 *.log
+.vercel

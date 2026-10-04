@@ -2,6 +2,11 @@
 
 **AI-Enabled Drone & Counter-Drone Threat Simulation Trainer** — a training-only prototype for Smart India Hackathon 2026 problem statement **SIH26247**, Ministry of Defence / Robotics & Drones theme.
 
+## Live deployment
+
+- **Launch SKYHAWK ARENA:** [https://skyhawk-arena.vercel.app](https://skyhawk-arena.vercel.app)
+- **Standalone offline HTML:** [Open the single-file app](https://skyhawk-arena.vercel.app/SKYHAWK_ARENA_SHARE.html)
+
 > All environments, entities, responses, score events, and signal effects are fictional and abstract. This prototype has no real-world vehicle control, weapon targeting, operational military procedure, or real countermeasure guidance.
 
 ## Run locally
@@ -25,6 +30,10 @@ npm run build:share
 ```
 
 This writes `SKYHAWK_ARENA_SHARE.html` in the project root. It embeds the app code and styles, starts in offline demo mode with no Firebase/Supabase credentials embedded, and uses hash routing so it can be opened directly as a local file. Demo progress is stored in browser storage when the browser permits it.
+
+## Deploy with Vercel
+
+The repository includes `vercel.json` for Vite builds, SPA route refreshes, and serving the standalone HTML alongside the regular app. Import the GitHub repository in Vercel; its build command is `npm run build:vercel` and its output directory is `dist`. No environment variables are required for the local demo. Add Firebase or Supabase client configuration only when those providers are intentionally configured; browser-exposed `VITE_` values are public.
 
 ## Demo access
 
